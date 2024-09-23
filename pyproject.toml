@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "policyengine_us_data"
-version = "1.3.0"
+version = "1.4.4"
 description = "A package to create representative microdata for the US."
 readme = "README.md"
 authors = [
@@ -16,20 +16,22 @@ dependencies = [
     "policyengine_core",
     "requests",
     "tqdm",
-    "build",
-    "tomli"
 ]
 
 [project.optional-dependencies]
 dev = [
     "black",
     "pytest",
-    "policyengine_us==1.71.1",
-    "streamlit",
-    "survey_enhance",
+    "policyengine_us @ git+https://github.com/policyengine/policyengine-us@us-rent-data",
+    "quantile-forest",
     "torch",
     "tables",
     "tabulate",
+    "furo",
+    "jupyter-book",
+    "yaml-changelog>=0.1.7",
+    "build",
+    "tomli",
 ]
 
 [tool.setuptools]

@@ -8,13 +8,17 @@ from policyengine_us_data.utils import (
 )
 import numpy as np
 from typing import Type
-from policyengine_us_data.data_storage import STORAGE_FOLDER
+from policyengine_us_data.storage import STORAGE_FOLDER
 from policyengine_us_data.datasets.cps.extended_cps import (
     ExtendedCPS_2024,
     CPS_2019,
     CPS_2024,
 )
-import torch
+
+try:
+    import torch
+except ImportError:
+    torch = None
 
 
 def reweight(
@@ -95,13 +99,13 @@ def train_previous_year_income_model():
     df = sim.calculate_dataframe(VARIABLES + OUTPUTS, 2019, map_to="person")
     df_train = df[df.previous_year_income_available]
 
-    from survey_enhance import Imputation
+    from policyengine_us_data.utils import QRF
 
-    income_last_year = Imputation()
+    income_last_year = QRF()
     X = df_train[VARIABLES[1:]]
     y = df_train[OUTPUTS]
 
-    income_last_year.train(X, y)
+    income_last_year.fit(X, y)
 
     return income_last_year
 
@@ -111,7 +115,6 @@ class EnhancedCPS(Dataset):
     input_dataset: Type[Dataset]
     start_year: int
     end_year: int
-    url = "release://policyengine/policyengine-us-data/release/enhanced_cps_2024.h5"
 
     def generate(self):
         from policyengine_us import Microsimulation
@@ -171,6 +174,7 @@ class EnhancedCPS_2024(EnhancedCPS):
     name = "enhanced_cps_2024"
     label = "Enhanced CPS 2024"
     file_path = STORAGE_FOLDER / "enhanced_cps_2024.h5"
+    url = "release://policyengine/policyengine-us-data/release/enhanced_cps_2024.h5"
 
 
 if __name__ == "__main__":
